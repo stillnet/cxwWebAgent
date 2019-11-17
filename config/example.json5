@@ -1,0 +1,27 @@
+{
+  thissitename: 'Your location',   // the sitename we are monitoring from
+  debuglogging: true,  // logs extra data to stdout
+  endpoints: [
+    {
+      name: 'my Postgres DB',
+      type: 'postgres',
+      user: '',
+      host: '',
+      database: '',
+      password: '',
+      port: 5432,
+      ssl: true
+    }
+  ],
+  // websites to be monitored
+  websites: [
+    {
+      name: 'Google',
+      url: 'https://google.com/',
+    },
+    {
+      name: 'Yahoo',
+      url: 'https://yahoo.com/'
+    }
+  ],
+}

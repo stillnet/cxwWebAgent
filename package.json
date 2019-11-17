@@ -1,0 +1,15 @@
+{
+  "name": "cxwwebagent",
+  "version": "0.0.1",
+  "description": "Agent for monitoring response time on websites and logging the data to a remote database",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ryan Stille",
+  "license": "ISC",
+  "dependencies": {
+    "config": "^3.2.4",
+    "loadtest": "^3.0.9"
+  }
+}
