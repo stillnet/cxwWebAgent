@@ -1,6 +1,6 @@
 # cxwWebAgent
 
-Monitors response times of websites and logs the data into a PostgreSQL databsae
+Monitors response times of websites and logs the data into a PostgreSQL database. Waits 1 second inbetween requests, not including the time the request actually took. So the requests will never "pile up". A request is run, and once it finishes the program waits 1 second before sending the next request to that same site. All sites listed in the configuration file are run concurrently.
 
 ## Usage
 
