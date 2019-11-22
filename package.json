@@ -9,6 +9,7 @@
   "author": "Ryan Stille",
   "dependencies": {
     "config": "^3.2.4",
-    "loadtest": "^3.0.9"
+    "loadtest": "^3.0.9",
+    "pg": "^7.14.0"
   }
 }
