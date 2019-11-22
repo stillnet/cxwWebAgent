@@ -1,3 +1,5 @@
+#!/usr/bin/node
+
 const loadtest = require('loadtest')
 const { Pool } = require('pg')
 const fs = require('fs')
