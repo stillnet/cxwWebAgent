@@ -63,7 +63,7 @@ const pool = new Pool({
 ;(async function() {
     const client = await pool.connect()
     .then( result => {
-        console.log(`Connection to ${endpoint.name} successful!. Will log from "${thissitename)}"`)
+        console.log(`Connection to ${endpoint.name} successful!. Will log from "${thissitename}"`)
         result.release()
     } )
     .catch( e=> {console.error(`Error connecting to ${endpoint.name}! ${e} `); process.exit()})
