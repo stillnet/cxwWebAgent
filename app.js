@@ -15,6 +15,7 @@ if (! (config.has('thissitename') && config.get('thissitename').length > 0)) {
     console.log('You must define thissitename in the config file')
     process.exit()
 }
+var thissitename = config.get('thissitename')
 
 if (! (config.has('endpoints') && config.get('endpoints').length > 0)) {
     console.log('You must define an endpoint in the config file')
@@ -24,6 +25,15 @@ if (! (config.has('endpoints') && config.get('endpoints').length > 0)) {
 if (! (config.has('websites') && config.get('websites').length > 0)) {
     console.log('You must define at least one website in the config file')
     process.exit()
+}
+
+// if thissitename is the special value of 'auto', try to figure it out
+if ( thissitename == 'auto' ) {
+    var tmphostname = require('child_process').execSync('hostname -d').toString()
+    var tmphostnameParts = tmphostname.split('.').reverse()
+    tmphostname = tmphostnameParts[1]
+    //console.log(`hostname is ${tmphostname}`); process.exit();
+    thissitename = tmphostname
 }
 
 // connect to the database. For now we only support one connection, pull the first endpoint
@@ -53,7 +63,7 @@ const pool = new Pool({
 ;(async function() {
     const client = await pool.connect()
     .then( result => {
-        console.log(`Connection to ${endpoint.name} successful!. Will log from "${config.get('thissitename')}"`)
+        console.log(`Connection to ${endpoint.name} successful!. Will log from "${thissitename)}"`)
         result.release()
     } )
     .catch( e=> {console.error(`Error connecting to ${endpoint.name}! ${e} `); process.exit()})
@@ -91,7 +101,7 @@ async function sendData(website, testTimestamp, meanLatencyMs) {
     VALUES ($1, $2, $3, $4 );
     `
 
-    await pool.query(query,[testTimestamp, website.url, config.get('thissitename'), meanLatencyMs])
+    await pool.query(query,[testTimestamp, website.url, thissitename, meanLatencyMs])
     .then( ()=> {
         if (debuglogging) console.log(`${meanLatencyMs} for ${website.name} has been sent.`)
         // wait a second then continue
