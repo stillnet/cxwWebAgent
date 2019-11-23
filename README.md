@@ -12,6 +12,6 @@ After downloading:
    * Define some sites to monitor
    * Define a postgreSQL/TimescaleDB database to log the data to
    * Probably want to set ```debuglogging: true```
-4. Run the script ```node app.js```
+4. Run the script ```npm start```
 
 You should see logging output indicating data is being sent to your database.
