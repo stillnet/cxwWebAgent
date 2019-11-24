@@ -63,6 +63,11 @@ const pool = new Pool({
     ssl: endpoint.ssl
 })
 
+pool.on('error', function(error) {
+    console.log('Lost connection to database. Will exit.')
+    process.exit()
+})
+
 // test our connection
 ;(async function() {
     const client = await pool.connect()
