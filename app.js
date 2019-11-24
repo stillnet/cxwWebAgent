@@ -117,7 +117,9 @@ function doMonitor(website) {
     var testTimestamp = new Date()
     loadtest.loadTest(loadtestOptions, (error,testresult) => {
         if (error || testresult.totalErrors) {
-            return console.error(`Got an error testing ${website.name}: ${error}`);
+            console.error(`Got an error testing ${website.name}: ${error}. Will wait and retry.`);
+            setTimeout(doMonitor.bind(this,website),5000)
+            return;
         }
 
         var meanLatencyMs = parseInt(testresult.meanLatencyMs)
@@ -143,7 +145,7 @@ async function sendData(website, testTimestamp, meanLatencyMs) {
     })
     .catch( (error) => {
         console.log(`Lost connection to database: ${error}. Will wait and try again.`)
-        setTimeout(doMonitor.bind(this,website),3000)
+        setTimeout(doMonitor.bind(this,website),5000)
     })
 }
 
