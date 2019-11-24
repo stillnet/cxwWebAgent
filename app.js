@@ -34,6 +34,10 @@ if ( thissitename == 'auto' ) {
     tmphostname = tmphostnameParts[1]
     //console.log(`hostname is ${tmphostname}`); process.exit();
     thissitename = tmphostname
+    if ( thissitename == undefined ) {
+        console.log('Unable to automatically determine hostname. Exiting.')
+	process.exit()
+    }
 }
 
 // connect to the database. For now we only support one connection, pull the first endpoint
@@ -71,7 +75,8 @@ const pool = new Pool({
 
 // call doMonitor for each website in the config file
 config.get('websites').forEach(website => {
-    doMonitor(website)
+    // wait 2 seconds before starting, to allow our container to settle down. Else first read is slow.    
+    setTimeout(doMonitor.bind(this,website),2000)
 });
 
 function doMonitor(website) {
