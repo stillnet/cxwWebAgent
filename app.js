@@ -54,29 +54,52 @@ try {
     debuglogging = (config.get('debuglogging') == true)
 } catch(e) { /* throw(e)  */ }
 
-const pool = new Pool({
-    user: endpoint.user,
-    host: endpoint.host,
-    database: endpoint.database,
-    password: endpoint.password,
-    port: endpoint.port,
-    ssl: endpoint.ssl
-})
+var pool;
 
-pool.on('error', function(error) {
-    console.log('Lost connection to database. Will exit.')
-    process.exit()
-})
+function connectToDB(retryOnFailure = true) {
 
-// test our connection
-;(async function() {
-    const client = await pool.connect()
-    .then( result => {
-        console.log(`Connection to ${endpoint.name} successful!. Will log from "${thissitename}"`)
-        result.release()
-    } )
-    .catch( e=> {console.error(`Error connecting to ${endpoint.name}! ${e} `); process.exit()})
-})()
+    pool = new Pool({
+        user: endpoint.user,
+        host: endpoint.host,
+        database: endpoint.database,
+        password: endpoint.password,
+        port: endpoint.port,
+        ssl: endpoint.ssl,
+        connectionTimeoutMillis: 5000,
+	query_timeout: 3000
+    })
+    
+    pool.on('error', function(error) {
+        console.log('Lost connection to database: ' + error)
+        console.log('Will wait and try to reconnrect')
+        setTimeout(connectToDB,5000)
+    })
+    
+    // test our connection
+    ;(async function() {
+        const client = await pool.connect()
+        .then( result => {
+            console.log(`Connection to ${endpoint.name} successful!. Will log from "${thissitename}"`)
+	    result.on('error', (error) => {
+	        console.log(`error on the client: ${error}`)
+	    })
+            result.release()
+        } )
+        .catch( e=> {
+	    if (retryOnFailure) {
+		console.log(`Error connecting to ${endpoint.name}! ${e}`)
+		console.log(`Will wait and retry`)
+                setTimeout(connectToDB,5000)
+	    }
+	    else {
+	        console.error(`Error connecting to ${endpoint.name}! ${e}. Will exit. `)
+		process.exit()}
+	    })
+    })()
+}
+
+// passing retryOnFailure = false for the first time we connect
+connectToDB(false)
 
 // call doMonitor for each website in the config file
 config.get('websites').forEach(website => {
@@ -117,6 +140,10 @@ async function sendData(website, testTimestamp, meanLatencyMs) {
         // wait a second then continue
         setTimeout(doMonitor.bind(this,website),1000)
         //client.end
+    })
+    .catch( (error) => {
+        console.log(`Lost connection to database: ${error}. Will wait and try again.`)
+        setTimeout(doMonitor.bind(this,website),3000)
     })
 }
 
