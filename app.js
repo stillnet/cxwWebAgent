@@ -111,7 +111,8 @@ function doMonitor(website) {
     var loadtestOptions = {
         url: website.url,
         maxRequests: 1,  // maybe later these will come from the config file
-        concurrency: 1
+        concurrency: 1,
+	insecure: true  // needed if the ssl certifcate is self-signed or otherwise not perfect
     }
 
     var testTimestamp = new Date()
