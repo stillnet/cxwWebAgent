@@ -8,7 +8,7 @@
   },
   "author": "Ryan Stille",
   "dependencies": {
-    "config": "^3.2.4",
+    "config": "^3.3.8",
     "loadtest": "^3.0.9",
     "pg": "^7.14.0"
   },
